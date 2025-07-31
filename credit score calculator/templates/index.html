@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Credit Score Calculator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px 60px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 25px;
+            font-size: 17px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Credit Score & Risk Category Calculator</h1>
+        <form method="POST" action="/calculate" id="scoreForm">
+            <label>Payment Delay (Days):</label>
+            <input type="number" name="payment_delay" required>
+
+            <label>Past Due Amount (Lakhs):</label>
+            <input type="number" step="any" name="past_due" required>
+
+            <label>Credit Limit (Lakhs):</label>
+            <input type="number" step="any" name="credit_limit" required>
+
+            <label>Bounced Cheques:</label>
+            <input type="number" name="bounced_cheques" required>
+
+            <label>Years with Salcomp:</label>
+            <input type="number" name="years_with_salcomp" required>
+
+            <button type="submit">Calculate</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('scoreForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            resultDiv.innerHTML = `
+                Credit Score: <strong>${result.credit_score}</strong><br>
+                Risk Category: <strong>${result.risk_category}</strong>
+            `;
+        });
+    </script>
+</body>
+</html>
